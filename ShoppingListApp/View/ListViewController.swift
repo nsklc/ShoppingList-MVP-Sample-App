@@ -27,12 +27,10 @@ class ListViewController: UIViewController {
     }()
     
     lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: view.frame)
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-        tableView
-            .translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
@@ -41,7 +39,6 @@ class ListViewController: UIViewController {
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
         label.textColor = .darkGray
         label.text = "No stored items yet"
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -49,7 +46,7 @@ class ListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        presenter.viewDidLoad()
+        presenter.notifyViewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -80,21 +77,10 @@ class ListViewController: UIViewController {
         if #available(iOS 13.0, *) {
             overrideUserInterfaceStyle = .light
         }
-        self.view.backgroundColor = .white
+        view.backgroundColor = .white
         
-        self.view.addSubview(tableView)
-        self.view.addSubview(placeholderLabel)
-        
-        NSLayoutConstraint.activate([
-            tableView.widthAnchor
-                .constraint(equalTo: self.view.widthAnchor),
-            tableView.heightAnchor
-                .constraint(equalTo: self.view.heightAnchor),
-            placeholderLabel.centerXAnchor
-                .constraint(equalTo: self.view.centerXAnchor),
-            placeholderLabel.centerYAnchor
-                .constraint(equalTo: self.view.centerYAnchor)
-        ])
+        view.addSubview(tableView)
+        view.addSubview(placeholderLabel)
     }
     
     private func setupNavItem() {
@@ -109,13 +95,13 @@ extension ListViewController: ItemsView {
     func onItemsRetrieval(titles: [String]) {
         print("View recieves the result from the Presenter.")
         self.titles = titles
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
     
     func onItemAddSuccess(title: String) {
         print("View recieves the result from the Presenter.")
-        self.titles.append(title)
-        self.tableView.reloadData()
+        titles.append(title)
+        tableView.reloadData()
     }
     
     func onItemAddFailure(message: String) {
@@ -124,8 +110,8 @@ extension ListViewController: ItemsView {
     
     func onItemDeletion(index: Int) {
         print("View recieves a deletion result from the Presenter")
-        self.titles.remove(at: index)
-        self.tableView.reloadData()
+        titles.remove(at: index)
+        tableView.reloadData()
     }
 }
 
@@ -133,8 +119,8 @@ extension ListViewController: ItemsView {
 extension ListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableView.isHidden = self.titles.isEmpty
-        placeholderLabel.isHidden = !self.titles.isEmpty
+        tableView.isHidden = titles.isEmpty
+        placeholderLabel.isHidden = !titles.isEmpty
         
         return self.titles.count
     }

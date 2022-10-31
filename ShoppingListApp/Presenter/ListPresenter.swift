@@ -10,7 +10,7 @@ import RealmSwift
 
 protocol ListViewPresenter: AnyObject {
     init(view: ItemsView)
-    func viewDidLoad()
+    func notifyViewDidLoad()
     func addTapped(with title: String)
     func deleteSelected(for index: Int)
 }
@@ -27,7 +27,7 @@ class ListPresenter: ListViewPresenter {
     }
     
     // MARK: - Protocol methods
-    func viewDidLoad() {
+    func notifyViewDidLoad() {
         print("View notifies the Presenter that it has loaded.")
         retrieveItems()
     }
